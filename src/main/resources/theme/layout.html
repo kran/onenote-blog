@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
+<head>
+    <!--<meta name="viewport" content="width=device-width,minimum-scale=0.5,maximum-scale=4">-->
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>{{blogTitle}}</title>
+    <style>
+        html, body { margin: 0; padding: 0; border: 0; background: #ffffff; height: auto; width: 100%; }
+        html, body, p, ul, li, input { font-family: Arial, sans-serif; font-size: 18px; line-height: 150%; color: #000000; font-weight: normal; }
+        img, a { border: 0; }
+        p {padding: 0; margin: 0}
+        body { position: relative}
+        h1.main-title { margin: 1em; margin-left: 0; border-bottom: 7px #99999950 solid; font-size: 1.5em; font-weight: bold; color: #3E5D7A; display: inline-block;}
+        a.section, a.section:visited {color: rgb(0, 0, 238); font-size: .8em;}
+        .item { position: relative;}
+        .summary::after {content: ''; clear: both; display: block;}
+        .time { font-size: 0.6em; color: #999999; }
+        .meta { padding: 0.5px;margin: 2em 0 1em 0;}
+        .meta a { /* Title */ font-weight: bold; font-size: 2.8em; color: #990000;  border-bottom: 1px solid #999; line-height: 1.1}
+        .summary {text-indent: 2rem; margin: 1rem}
+        .summary img.cover { float: left; max-width: 380px; height: auto; margin-right: 1em; margin-bottom: 1em;}
+        #footer { padding-top: 5px; left: 0; bottom: 0; background: #fff; text-align: left; font-size: .7em; color: #999;}
+        /*onenote*/
+        [data-tag*="question"]::before { content: '❓'; background: none !important; }
+        [data-tag*="to-do:completed"]::before { content: '☒' !important; background: none !important; font-weight: bold; color: #65A2DB; font-size: 130%;}
+        [data-tag*="to-do"]::before { content: '☐'; background: #fff !important; font-weight: bold; color: #65A2DB; font-size: 130%;}
+        [data-tag*="important"]::before { content: '⭐'; background: #fff !important; }
+        [data-tag*="remember-for-later"] { display: inline !important; background: yellow; }
+        [data-tag*="remember-for-later"]::after { content: ''; display: block; }
+        #page table {width: 100%;}
+    </style>
+</head>
+<body>
+
+<div>
+    <h1 class="main-title">{{blogTitle}}</h1>
+    [<a class="section" href="/">首页</a>]
+    {% for section in sections %}
+        [<a class="section" href="/section/{{section.id}}">{{section.displayName}}</a>]
+    {% endfor %}
+</div>
+
+{% block content %}
+<p>这里是默认内容。</p>
+{% endblock %}
+
+<div id="footer">
+    //在旷野中游荡……
+</div>
+
+<script>
+    var bodyHeight = (document.body.scrollHeight+100);
+    document.body.style.height = bodyHeight +'px';
+    var page = document.getElementById("page");
+    if(page) {
+        var foot = document.getElementById('footer').style;
+        foot.position = 'absolute';
+        foot.top = bodyHeight +'px';
+    }
+</script>
+</body>
+</html>

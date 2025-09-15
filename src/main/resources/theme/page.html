@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="page" class="item">
+    <div class="meta">
+        <p><span class="title"><a href="/page/{{page.id}}">{{page.title}}</a></span></p>
+        <p><span class="time">{{page.createdDateTime}}</span></p>
+    </div>
+    {{ page.content | raw }}
+</div>
+{% endblock %}

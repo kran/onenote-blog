@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% for page in pages %}
+<div class="item">
+    <div class="meta">
+        <p><span class="title"><a href="/page/{{page.id}}">{{page.title}}</a></span></p>
+        <p><span class="time">{{page.createdDateTime}} [{{page.sectionName}}]</span></p>
+    </div>
+    <div class="summary">
+        {% if(page.cover) %}
+        <img class="cover" src="{{page.cover}}"/>
+        {% endif %}
+        {{page.summary | raw}}……
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
