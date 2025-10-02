@@ -8,10 +8,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import onelog.common.Exchange;
 import onelog.tasks.OneNoteSync;
-import org.v2u.toy.jetty.Doge;
+import org.v2u.doge.Doge;
 
 @Slf4j
-public class BlogApp {
+public class BlogBoot {
     @Inject
     BlogConfig blogConfig;
     @Inject
@@ -19,7 +19,7 @@ public class BlogApp {
 
     public static void main(String[] args) {
         Guice.createInjector(new BlogModule(args[0]))
-          .getInstance(BlogApp.class)
+          .getInstance(BlogBoot.class)
           .start();
     }
 
@@ -36,7 +36,6 @@ public class BlogApp {
     public void startHttp() {
         var doge = new Doge.Server<>(Exchange::new)
           .port(blogConfig.getPort())
-          //.staticDir(new File("./public").getAbsolutePath())
           .start();
 
         guice.getInstance(BlogRouter.class).init(doge);

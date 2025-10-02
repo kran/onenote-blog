@@ -37,7 +37,7 @@ public class BlogAction {
     @Inject
     BlogConfig blogConfig;
 
-    private final int PAGE_SIZE = 100;
+    private final int PAGE_SIZE = 5;
 
     @SneakyThrows
     private String view(String view, Map<String, Object> vars) {

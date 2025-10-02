@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-{% for page in pages %}
+{% for page in pages.list %}
 <div class="item">
     <div class="meta">
         <p><span class="title"><a href="/page/{{page.id}}">{{page.title}}</a></span></p>
@@ -15,4 +15,9 @@
     </div>
 </div>
 {% endfor %}
+<div class="pager">
+    {% for i in 1..pages.maxPage() %}
+    <a href="?page={{i}}">[{{i}}]</a>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -13,7 +13,7 @@ import onelog.daos.BlogDao;
 import onelog.data.view.GlobalViewVars;
 import onelog.utils.GraphApi;
 import onelog.utils.StartDb;
-import org.v2u.toy.duck.Duck;
+import org.v2u.stupidql.StupidQL;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +34,7 @@ public class BlogModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Duck provideDuck(StartDb startDb) {
+    StupidQL provideStupidQL(StartDb startDb) {
         var c = config.getH2();
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(c.getJdbcUrl());
@@ -43,9 +43,9 @@ public class BlogModule extends AbstractModule {
         hikariConfig.setMaximumPoolSize(c.getPoolSize());
         hikariConfig.setMinimumIdle(0);
 
-        var duck = Duck.init(new HikariDataSource(hikariConfig));
-        duck.add("runscript from 'classpath:schema.sql'").update();
-        return duck;
+        var stupidQL = StupidQL.init(new HikariDataSource(hikariConfig));
+        stupidQL.add("runscript from 'classpath:schema.sql'").update();
+        return stupidQL;
     }
 
     @Provides

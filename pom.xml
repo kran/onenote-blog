@@ -32,8 +32,13 @@
         </dependency>
         <dependency>
             <groupId>org.v2u</groupId>
-            <artifactId>toy</artifactId>
-            <version>1.1.2</version>
+            <artifactId>doge</artifactId>
+            <version>1.1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.v2u</groupId>
+            <artifactId>stupidql</artifactId>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -99,7 +104,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>onelog.BlogApp</mainClass>
+                                    <mainClass>onelog.BlogBoot</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

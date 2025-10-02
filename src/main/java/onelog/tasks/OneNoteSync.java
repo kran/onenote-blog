@@ -12,7 +12,7 @@ import onelog.data.models.Section;
 import onelog.utils.AbstractTask;
 import onelog.utils.GraphApi;
 import org.jsoup.Jsoup;
-import org.v2u.toy.duck.Duck;
+import org.v2u.stupidql.StupidQL;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -30,7 +30,7 @@ public class OneNoteSync extends AbstractTask {
     @Inject
     BlogDao blogDao;
     @Inject
-    Duck duck;
+    StupidQL stupidQL;
     @Inject
     BlogConfig blogConfig;
 
@@ -107,8 +107,8 @@ public class OneNoteSync extends AbstractTask {
         var path = "/v1.0/me/onenote/notebooks/" + notebookId + "/sections";
         var resp = graphApi.graphGet(path, Map.of());
         var sections = JSONUtil.toBean(resp, Sections.class);
-        duck.transaction(tx -> {
-            duck.delete(BlogDao.t_section, "1 = 1");
+        stupidQL.transaction(tx -> {
+            stupidQL.delete(BlogDao.t_section, "1 = 1");
             sections.value.forEach(sec -> tx.addInsert(sec).insert(String.class));
             return null;
         });

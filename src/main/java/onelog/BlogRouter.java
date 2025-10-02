@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import onelog.actions.BlogAction;
 import onelog.common.Exchange;
-import org.v2u.toy.jetty.Doge;
+import org.v2u.doge.Doge;
 
 @Slf4j
 @Singleton

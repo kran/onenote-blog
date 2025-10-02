@@ -4,10 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import onelog.data.Paged;
 import onelog.data.models.Kv;
 import onelog.data.models.Page;
 import onelog.data.models.Section;
-import org.v2u.toy.duck.Duck;
+import org.v2u.stupidql.StupidQL;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -18,14 +19,14 @@ import java.util.List;
 @Singleton
 public class BlogDao {
     @Inject
-    public Duck duck;
+    public StupidQL stupidQL;
 
     public static final String t_kv = "t_kv";
     public static final String t_section = "t_section";
     public static final String t_page = "t_page";
 
     public LocalDateTime pageLastUpdate(String sectionId) {
-        var page = duck
+        var page = stupidQL
           .select(t_page, "section_id = ?", sectionId)
           .add("order by last_modified_date_time desc limit 1")
           .fetchBean(Page.class);
@@ -34,22 +35,33 @@ public class BlogDao {
     }
 
     public Page pageGet(String id) {
-        return duck.select(t_page, "id = ?", id).fetchBean(Page.class);
+        return stupidQL.select(t_page, "id = ?", id).fetchBean(Page.class);
     }
 
-    public List<Page> pageList(String sectionId, int page, int limit) {
+    public Paged<Page> pageList(String sectionId, int page, int limit) {
         var offset = (page - 1) * limit;
-        var sql = """
+        var select = """
           select 
             p.id, p.title, p.summary, p.cover, p.last_modified_date_time, p.created_date_time, 
             s.display_name section_name 
-          from @{page} p left join @{section} s on p.section_id = s.id 
-          where 1 = 1
-          """;
-        return duck.add(sql, Duck.mapOf("page", t_page, "section", t_section))
-          .add(StrUtil.isNotBlank(sectionId), "and section_id = ?", sectionId)
-          .add("order by created_date_time desc limit ?, ?", offset, limit)
-          .fetchBeans(Page.class);
+        """;
+
+        var q = stupidQL
+          .mark(StupidQL.FIELDS, "select count(1)")
+          .add("from @{1} p left join @{2} s on p.section_id = s.id where 1 = 1", t_page, t_section)
+          .add(StrUtil.isNotBlank(sectionId), "and section_id = ?", sectionId);
+
+        var total = q.fetchScalar(Long.class);
+        var paged = new Paged<Page>(limit);
+        if(total > 0) {
+            var list = q.mark(StupidQL.FIELDS, select)
+              .add("order by created_date_time desc limit ?, ?", offset, limit)
+              .fetchBeans(Page.class);
+            paged.setTotal(total);
+            paged.setList(list);
+        }
+
+        return paged;
     }
 
     public void pageSave(Page page) {
@@ -58,23 +70,23 @@ public class BlogDao {
           key (id)
           values (#{id}, #{sectionId}, #{title}, #{cover}, #{summary}, #{content}, #{createdDateTime}, #{lastModifiedDateTime})
           """;
-        duck.add(sql, page).insert(String.class);
+        stupidQL.add(sql, page).insert(String.class);
     }
 
     public String kvGet(String name) {
-        var kv = duck.select(t_kv, "name = ?", name).fetchBean(Kv.class);
+        var kv = stupidQL.select(t_kv, "name = ?", name).fetchBean(Kv.class);
         if(kv == null) return null;
         return kv.getVal();
     }
 
     public <T> T kvGet(String name, Class<T> retType) {
-        var kv = duck.select(t_kv, "name = ?", name).fetchBean(Kv.class);
+        var kv = stupidQL.select(t_kv, "name = ?", name).fetchBean(Kv.class);
         if(kv == null) return null;
         return kv.decode(retType);
     }
 
     public List<Section> sections() {
-        return duck.select(t_section).fetchBeans(Section.class);
+        return stupidQL.select(t_section).fetchBeans(Section.class);
     }
 
     public void kvSave(String name, String val) {
@@ -90,6 +102,6 @@ public class BlogDao {
           values (#{name}, #{val})
           """;
 
-        duck.add(sql, it).insert();
+        stupidQL.add(sql, it).insert();
     }
 }
