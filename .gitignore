@@ -37,8 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 .idea
-.idea
-log
+/log
 dependency-reduced-pom.xml
-cache
-data
+/cache
+/data
+/out
