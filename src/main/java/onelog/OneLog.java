@@ -49,6 +49,7 @@ public class OneLog {
     public static void main(String[] args) {
         var jsonStr = Files.readString(Paths.get(args[0]));
         var settings = JSONUtil.toBean(jsonStr, Settings.class);
+        log.info("Settings: {}", settings);
         new OneLog(settings).start();
     }
 
