@@ -301,7 +301,12 @@ public class OneLog {
 
         public void sync(String notebookId) {
             var sections = syncSections(notebookId);
-            sections.forEach(s -> syncPages(s.getId()));
+            sections.forEach(s -> {
+                if(settings.ignoreSections.contains(s.displayName)) {
+                    return;
+                }
+                syncPages(s.getId());
+            });
         }
 
         public void syncPages(String sectionId) {
@@ -599,6 +604,7 @@ public class OneLog {
         private String email;
         private String notebookId;
         private int pageSize = 5;
+        private List<String> ignoreSections = new ArrayList<>();
 
         @Data
         public static class H2 {
