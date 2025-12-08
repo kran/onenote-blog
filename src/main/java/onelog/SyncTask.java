@@ -101,7 +101,7 @@ public class SyncTask implements Task {
         var path = "/v1.0/me/onenote/notebooks/" + notebookId + "/sections";
         var resp = graphApi.graphGet(path, Map.of());
         var sections = JSONUtil.toBean(resp, Sections.class);
-        //sections.value = sections.value.stream().filter(it -> !it.getDisplayName().startsWith("$")).toList();
+        sections.value = sections.value.stream().filter(it -> !it.getDisplayName().startsWith("$")).toList();
         stupidQL.transaction(tx -> {
             stupidQL.delete(BlogDao.t_section, "1 = 1");
             sections.value.forEach(sec -> tx.addInsert(sec).insert(String.class));
