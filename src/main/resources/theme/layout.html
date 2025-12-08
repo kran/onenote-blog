@@ -3,7 +3,10 @@
 <head>
     <!--<meta name="viewport" content="width=device-width,minimum-scale=0.5,maximum-scale=4">-->
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <title>{{blogTitle}}</title>
+    <link rel="shortcut icon" href="/statics/favicon.png" type="image/x-icon" />
+    <title>{%if pageTitle is defined%}{{pageTitle}} | {%endif%}{{blogTitle}}</title>
+    <link href="/statics/aplayer.min.css" rel="stylesheet" />
+    <script src="/statics/aplayer.min.js"></script>
     <style>
         html, body { margin: 0; padding: 0; border: 0; background: #ffffff; height: auto; width: 100%; }
         html, body, p, ul, li, input { font-family: Arial, sans-serif; font-size: 18px; line-height: 150%; color: #000000; font-weight: normal; }
@@ -28,6 +31,9 @@
         [data-tag*="remember-for-later"] { display: inline !important; background: yellow; }
         [data-tag*="remember-for-later"]::after { content: ''; display: block; }
         #page table {width: 100%;}
+        a.can-play { color: #1a73e8; text-decoration: none; font-weight: bold; transition: all 0.3s; }
+        a.can-play:hover { color: #d93025; text-decoration: underline; }
+        a.can-play::before { content: "▶";       display: inline-block; margin-right: 5px;  color: #34a853;     font-size: 0.8em;  background: #e6f4ea; width: 20px; height: 20px; text-align: center; line-height: 20px; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -48,15 +54,67 @@
     //在旷野中游荡……
 </div>
 
+<div id="aplayer"></div>
+
 <script>
-    var bodyHeight = (document.body.scrollHeight+100);
-    document.body.style.height = bodyHeight +'px';
-    var page = document.getElementById("page");
-    if(page) {
+    (function () {
+        var page = document.getElementById("page");
+        if(!page) return;
+
+        var bodyHeight = (document.body.scrollHeight+100);
+        document.body.style.height = bodyHeight +'px';
+
         var foot = document.getElementById('footer').style;
         foot.position = 'absolute';
         foot.top = bodyHeight +'px';
-    }
+
+        const mp3Links = document.querySelectorAll('a[href$=".mp3"]');
+        if(mp3Links.length === 0) return;
+
+        const audioList = [];
+        mp3Links.forEach(function(link, index) {
+            link.classList.add('can-play');
+            link.setAttribute('data-index', index);
+
+            let name = link.innerText;
+            let url = link.getAttribute('href');
+
+            audioList.push({
+                name: name.substring(0, 20),
+                artist: "BLOG",
+                url: url,
+            });
+        });
+
+        const ap = new APlayer({
+            container: document.getElementById('aplayer'),
+            fixed: true,        // 开启吸底模式
+            listFolded: true,   // 列表默认折叠
+            autoplay: false,
+            preload: 'auto',
+            loop: 'all',
+            order: 'list',
+            audio: audioList
+        });
+
+        mp3Links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // 阻止浏览器下载或跳转
+                let index = parseInt(this.getAttribute('data-index'));
+                ap.list.switch(index); // 切换到对应歌曲
+                ap.play();             // 开始播放
+            });
+        });
+
+        ap.on('listswitch', function(item) {
+            document.querySelectorAll('a.playing').forEach(el => el.classList.remove('playing'));
+            let index = item.index;
+            if(mp3Links[index]) {
+                mp3Links[index].classList.add('playing');
+                mp3Links[index].scrollIntoView({behavior: 'smooth', block: 'center'});
+            }
+        });
+    })();
 </script>
 </body>
 </html>

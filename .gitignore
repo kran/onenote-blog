@@ -42,3 +42,4 @@ dependency-reduced-pom.xml
 /cache
 /data
 /out
+*.yaml
