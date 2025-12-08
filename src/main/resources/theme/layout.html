@@ -31,10 +31,12 @@
         [data-tag*="remember-for-later"] { display: inline !important; background: yellow; }
         [data-tag*="remember-for-later"]::after { content: ''; display: block; }
         #page table {width: 100%;}
-        a.can-play { color: #1a73e8; text-decoration: none; font-weight: bold; transition: all 0.3s; }
-        a.can-play:hover { color: #d93025; text-decoration: underline; }
-        a.can-play::before { content: "▶";       display: inline-block; margin-right: 5px;  color: #34a853;     font-size: 0.8em;  background: #e6f4ea; width: 20px; height: 20px; text-align: center; line-height: 20px; border-radius: 50%; }
-    </style>
+        a.mp3-link { color: #333; text-decoration: none; transition: all 0.2s; flex: 1; display: block; }
+        a.mp3-link:hover { color: #1a73e8; }
+        a.playing { color: #d93025; font-weight: bold; }
+        a.playing::before { content: '🎵'; margin-right: 8px; }
+        a.mp3-link::before { content: '▶'; margin-right: 8px; color: #ccc; font-size: 0.8em; }
+        a.playing::before { content: 'Equalizer' !important; color: #d93025; font-size: 0px; width: 16px; height: 16px; display: inline-block; background: url('https://i.gifer.com/7YQo.gif') no-repeat center/contain; margin-right: 8px;}    </style>
 </head>
 <body>
 
@@ -73,7 +75,7 @@
 
         const audioList = [];
         mp3Links.forEach(function(link, index) {
-            link.classList.add('can-play');
+            link.classList.add('mp3-link');
             link.setAttribute('data-index', index);
 
             let name = link.innerText;
