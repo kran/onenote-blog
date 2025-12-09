@@ -35,6 +35,7 @@
         a.mp3-link::before { content: '▶'; display: inline-block; margin-right: 8px; color: #34a853; }
         a.playing { color: #d93025; }
         a.playing::before { content: '🎵'; margin-right: 8px; }
+        #aplayer .aplayer-body {position: fixed;bottom: 0;right: 0;}
     </style>
 </head>
 <body>
@@ -59,8 +60,59 @@
 
 <script>
     (function () {
+        var initMp3Audios = function () {
+            const mp3Links = document.querySelectorAll('a[href$=".mp3"]');
+            if(mp3Links.length === 0) return;
+
+            const audioList = [];
+            mp3Links.forEach(function(link, index) {
+                link.classList.add('mp3-link');
+                link.setAttribute('data-index', index);
+
+                let name = link.innerText;
+                let url = link.getAttribute('href');
+
+                audioList.push({
+                    name: name.substring(0, 20),
+                    artist: "BLOG",
+                    url: url,
+                });
+            });
+
+            const ap = new APlayer({
+                container: document.getElementById('aplayer'),
+                mini: true,        // 开启吸底模式
+                listFolded: true,   // 列表默认折叠
+                autoplay: false,
+                preload: 'none',
+                loop: 'all',
+                order: 'list',
+                audio: audioList
+            });
+
+            mp3Links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // 阻止浏览器下载或跳转
+                    let index = parseInt(this.getAttribute('data-index'));
+                    ap.list.switch(index); // 切换到对应歌曲
+                    ap.play();             // 开始播放
+                });
+            });
+
+            ap.on('listswitch', function(item) {
+                document.querySelectorAll('a.playing').forEach(el => el.classList.remove('playing'));
+                let index = item.index;
+                if(mp3Links[index]) {
+                    mp3Links[index].classList.add('playing');
+                    // mp3Links[index].scrollIntoView({behavior: 'smooth', block: 'center'});
+                }
+            });
+        };
+
         var page = document.getElementById("page");
         if(!page) return;
+
+        initMp3Audios();
 
         var bodyHeight = (document.body.scrollHeight+100);
         document.body.style.height = bodyHeight +'px';
@@ -68,53 +120,6 @@
         var foot = document.getElementById('footer').style;
         foot.position = 'absolute';
         foot.top = bodyHeight +'px';
-
-        const mp3Links = document.querySelectorAll('a[href$=".mp3"]');
-        if(mp3Links.length === 0) return;
-
-        const audioList = [];
-        mp3Links.forEach(function(link, index) {
-            link.classList.add('mp3-link');
-            link.setAttribute('data-index', index);
-
-            let name = link.innerText;
-            let url = link.getAttribute('href');
-
-            audioList.push({
-                name: name.substring(0, 20),
-                artist: "BLOG",
-                url: url,
-            });
-        });
-
-        const ap = new APlayer({
-            container: document.getElementById('aplayer'),
-            fixed: true,        // 开启吸底模式
-            listFolded: true,   // 列表默认折叠
-            autoplay: false,
-            preload: 'auto',
-            loop: 'all',
-            order: 'list',
-            audio: audioList
-        });
-
-        mp3Links.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // 阻止浏览器下载或跳转
-                let index = parseInt(this.getAttribute('data-index'));
-                ap.list.switch(index); // 切换到对应歌曲
-                ap.play();             // 开始播放
-            });
-        });
-
-        ap.on('listswitch', function(item) {
-            document.querySelectorAll('a.playing').forEach(el => el.classList.remove('playing'));
-            let index = item.index;
-            if(mp3Links[index]) {
-                mp3Links[index].classList.add('playing');
-                // mp3Links[index].scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
-        });
     })();
 </script>
 </body>
