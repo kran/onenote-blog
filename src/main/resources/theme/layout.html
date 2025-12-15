@@ -62,6 +62,12 @@
         var initMp3Audios = function () {
             const mp3Links = document.querySelectorAll('a[href$=".mp3"]');
             if(mp3Links.length === 0) return;
+            const pageDivs = document.querySelectorAll("#page > div");
+            if(pageDivs.length < 2) return;
+
+            const container = document.createElement("div");
+            container.id = "aplayer";
+            pageDivs[1].prepend(container);
 
             const audioList = [];
             mp3Links.forEach(function(link, index) {
@@ -73,7 +79,7 @@
 
                 audioList.push({
                     name: name.substring(0, 40),
-                    artist: "BLOG",
+                    artist: "↘",
                     url: url,
                     cover: "/statics/favicon.png"
                 });
@@ -81,13 +87,12 @@
 
             const ap = new APlayer({
                 container: document.getElementById('aplayer'),
-                // mini: true,        // 开启吸底模式
-                // fixed: true,
                 listFolded: true,   // 列表默认折叠
                 autoplay: false,
                 preload: 'none',
                 loop: 'all',
                 order: 'list',
+                theme: '#e5e5e5',
                 audio: audioList
             });
 
